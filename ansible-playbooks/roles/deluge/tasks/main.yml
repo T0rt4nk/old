@@ -1,0 +1,30 @@
+###############################################################################
+#                                                                             #
+#                           Install deluge and tools                          #
+#                                                                             #
+###############################################################################
+
+- name: copy systemd service file
+  copy: src=deluged.service dest=/etc/systemd/system/
+
+- name: install required packages deluge
+  apt: name={{ item }}
+  with_items:
+    - deluged
+    - deluge-console
+    - deluge-web
+
+- name: rename debian-deluged user to deluge
+  shell: usermod -l deluge debian-deluged
+  ignore_errors: yes
+
+- name: rename debian-deluged group to deluge
+  shell: groupmod -n deluge debian-deluged
+  ignore_errors: yes
+
+- name: update dpkgoverride according to new name
+  replace: dest=/var/lib/dpkg/statoverride regexp="debian-deluged" replace="deluge"
+
+- include: deluged.yml
+  #- include: deluge-web.yml
+

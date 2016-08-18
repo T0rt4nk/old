@@ -1,0 +1,28 @@
+- name: download oh-my-zsh
+  git:
+    repo=https://github.com/robbyrussell/oh-my-zsh.git
+    depth=1
+    dest=~/.oh-my-zsh
+
+- name: copy personal theme
+  copy: src=max.zsh-theme dest=~/.oh-my-zsh/themes/
+
+- name: copy zshrc conf
+  copy: src={{ user }}/zshrc dest=~/.zshrc
+
+- name: copy zprofile conf
+  copy: src={{ user }}/zprofile dest=~/.zprofile
+
+- name: copy xinitrc file
+  copy: src={{ user }}/xinitrc dest=~/.xinitrc
+
+- name: copy vimrc conf
+  copy: src=vimrc dest=~/.vimrc
+
+- name: install vundle
+  git:
+    repo=https://github.com/VundleVim/Vundle.vim.git
+    dest=~/.vim/bundle/Vundle.vim
+
+- name: install vim plugins
+  shell: vim +PluginInstall +qall

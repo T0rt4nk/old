@@ -1,0 +1,15 @@
+###############################################################################
+#                                                                             #
+#                       Vagrant dedicated configuration                       #
+#                                                                             #
+###############################################################################
+
+- name: install complementary packages
+  apt: name={{ item }}
+  with_items:
+    - libxslt-dev
+    - libxml2-dev
+    - libvirt-dev
+    - zlib1g-dev
+    - qemu-utils
+    - libvirt-dev

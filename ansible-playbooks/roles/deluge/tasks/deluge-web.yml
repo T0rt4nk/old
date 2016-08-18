@@ -1,0 +1,23 @@
+###############################################################################
+#                                                                             #
+#                     Install and configure deluge web UI                     #
+#                                                                             #
+###############################################################################
+
+- name: copy systemd service file
+  copy: src=deluge-web.service dest=/etc/systemd/system/
+
+- name: enable and start service
+  service: name=deluge-web enabled=yes state=started
+
+- name: copy nginx conf
+  copy: src=torrents dest=/etc/nginx/sites-available/
+
+- name: symlink file in sites enabled
+  file:
+    state=link
+    src=/etc/nginx/sites-available/torrents
+    dest=/etc/nginx/sites-enabled/torrents
+
+- name: reload nginx server
+  service: name=nginx state=reloaded

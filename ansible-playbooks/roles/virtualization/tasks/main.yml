@@ -1,0 +1,14 @@
+###############################################################################
+#                                                                             #
+#                         Install virtualization tools                        #
+#                                                                             #
+###############################################################################
+
+- name: install virtualization packages
+  apt: name={{ item }}
+  with_items: packages
+
+- include: docker.yml
+- include: libvirt.yml
+- include: vagrant.yml
+- include: users.yml

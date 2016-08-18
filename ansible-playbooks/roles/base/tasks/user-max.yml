@@ -1,0 +1,37 @@
+- name: copy aliases for user max
+  copy:
+    src=max/aliases
+    dest=~/.aliases
+
+- name: copy gitconfig for user max
+  copy:
+    src=max/gitconfig
+    dest=~/.gitconfig
+
+- name: copy gitignore_global for user max
+  copy:
+    src=max/gitignore_global
+    dest=~/.gitignore_global
+
+- name: copy ssh authorized_keys
+  copy: src=max/authorized_keys dest=~/.ssh/ mode=600
+
+- name: enable linger for max
+  shell: loginctl enable-linger max
+  become_user: root
+
+- name: retrieve uid
+  shell: id -u
+  register: uid
+
+- name: copy tmux conf
+  copy: src=max/tmux.conf dest=~/.tmux.conf
+
+- name: copy tmux systemd service file
+  copy: src=max/tmux.service dest=~/.config/systemd/user/
+
+# Dirty hack to make it work, remove when possible
+- name: enable and start tmux
+  service: name='tmux.service --user' enabled=yes state=started
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ uid.stdout }}"

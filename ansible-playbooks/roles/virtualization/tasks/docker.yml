@@ -1,0 +1,8 @@
+###############################################################################
+#                                                                             #
+#                       Docker dedicated configuration                        #
+#                                                                             #
+###############################################################################
+
+- name: enable and start service
+  service: name=docker enabled=yes state=started

@@ -1,0 +1,22 @@
+###############################################################################
+#                                                                             #
+#                     Install and configure deluge daemon                     #
+#                                                                             #
+###############################################################################
+
+- include_vars: vault.yml
+
+- name: stop deluged once to generate conf
+  service: name=deluged state=stopped
+
+- name: copy config file
+  copy: src=core.conf dest=~/config/
+  become_user: deluge
+
+- name: copy auth file
+  copy: content={{ auth }} dest=~/config/auth
+  become_user: deluge
+  no_log: True
+
+- name: enable and start service
+  service: name=deluged enabled=yes state=started

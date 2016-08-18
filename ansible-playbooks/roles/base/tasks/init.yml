@@ -1,0 +1,53 @@
+- name: generate french locale
+  locale_gen: name=fr_FR.UTF-8 state=present
+
+- name: setup default locale to en_US
+  debconf:
+    name=locales
+    question='locales/default_environment_locale'
+    value=en_US.UTF-8
+    vtype='select'
+
+- name: setup hostname to {{ hostname }}
+  hostname: name={{ hostname }}
+
+- name: setup timezone to {{ timezone }}
+  copy: content="{{ timezone }}" dest=/etc/timezone
+  register: timezone
+
+- name: update system to correct timezone
+  shell: dpkg-reconfigure -f noninteractive tzdata
+  when: timezone.changed
+
+- name: remove apt-listchanges package (for the upgrade)
+  apt: name=apt-listchanges state=absent
+
+- name: setup the repositories
+  copy: src=sources.list dest=/etc/apt/
+
+- name: update repositories cache and upgrade
+  apt: update_cache=yes upgrade=dist
+
+- name: install required packages
+  apt: name={{ item }}
+  with_items: packages
+
+- name: remove ssh motd banner
+  lineinfile:
+    dest=/etc/pam.d/sshd
+    regexp='^(.*pam_motd.so.*)$'
+    line='# \1'
+    backrefs=yes
+
+- name: activate ssh banner
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    regexp='^#(Banner).*$'
+    line='\1 /etc/ssh/banner'
+    backrefs=yes
+
+- name: copy banner file
+  copy: src=banner dest=/etc/ssh/
+
+- name: restart ssh service
+  service: name=sshd state=restarted

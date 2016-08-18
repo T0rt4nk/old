@@ -1,0 +1,34 @@
+###############################################################################
+#                                                                             #
+#                    Configure disks (zfs and idle3-tools)                    #
+#                                                                             #
+###############################################################################
+
+# follow this tutorial in order to correctly setup disks
+# https://wiki.manjaro.org/index.php?title=Western_Digital_Green_-_Drive_Fix_-_Linux
+- name: install required dependencies
+  apt: name={{ item }}
+  with_items:
+    - smartmontools
+    - idle3-tools
+
+
+- name: check disks cycle count
+  shell: smartctl -A {{ item }} |awk '/^193/ {print $10}'
+  register: disks_load_cycle_count
+  with_items: idle_disks
+
+- name: disable the timer on disks
+  shell: idle3ctl -g {{ item.item }}
+  when: item.stdout|int > 1000
+  with_items: disks_load_cycle_count.results
+
+- name: download zfs repo installer
+  get_url:
+    dest: /tmp/
+    url: "http://archive.zfsonlinux.org/debian/pool/main/z/zfsonlinux/zfsonlinux_6_all.deb"
+  register: debfile
+
+- name: install zfs repo installer
+  apt: deb={{ debfile.dest }}
+

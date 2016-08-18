@@ -1,0 +1,6 @@
+setxkbmap -option
+setxkbmap -layout fr -variant latin1
+
+xrdb -load ~/.Xresources
+
+exec i3

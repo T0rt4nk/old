@@ -1,0 +1,8 @@
+[user]
+	name = Maxime Vidori
+	email = maxime.vidori@gmail.com
+[core]
+	editor = vim
+	excludesfile = /home/max/.gitignore_global
+[push]
+	default = simple

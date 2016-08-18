@@ -1,0 +1,23 @@
+hostname: tortank
+timezone: Europe/Paris
+packages:
+  - vim
+  - git
+  - tig
+  - sudo
+  - zsh
+  - xorg
+  - i3
+  - tmux
+  - apt-file
+  - ranger
+packages_python:
+  - python-dev
+  - python-virtualenv
+  - python-ipdb
+  - ipython
+idle_disks:
+  - /dev/sdb
+  - /dev/sdd
+  - /dev/sde
+passwords: "{{ vault_passwords }}"

@@ -1,0 +1,9 @@
+###############################################################################
+#                                                                             #
+#                         Install base python dev env                         #
+#                                                                             #
+###############################################################################
+
+- name: install python packages for dev
+  apt: name={{ item }}
+  with_items: packages_python

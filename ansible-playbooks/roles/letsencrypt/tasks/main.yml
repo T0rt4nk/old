@@ -1,0 +1,19 @@
+###############################################################################
+#                                                                             #
+#                   Install letsencrypt and generate certs                    #
+#                                                                             #
+###############################################################################
+
+- name: install letsencrypt
+  apt: name=letsencrypt
+
+- name: stop nginx service
+  service: name=nginx state=stopped
+
+- name: generate certificates
+  shell: >
+    letsencrypt certonly -d {{ domains }} -m {{ email }}
+    --renew-by-default --agree-tos --rsa-key-size {{ key_size }}
+
+- name: start nginx again
+  service: name=nginx state=started

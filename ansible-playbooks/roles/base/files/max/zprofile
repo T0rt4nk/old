@@ -1,0 +1,7 @@
+if [[ ! -z "$SSH_CONNECTION" ]]
+then
+    tmux attach -t ssh
+elif [[ -z "$DISPLAY" && $XDG_VTNR -lt 3 ]]
+then
+    exec startx
+fi

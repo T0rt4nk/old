@@ -1,0 +1,43 @@
+###############################################################################
+#                                                                             #
+#                    Basic setup of users for the system                      #
+#                                                                             #
+###############################################################################
+
+- include_vars: vault.yml
+
+- name: create user max
+  user:
+    name=max
+    shell=/usr/bin/zsh
+    generate_ssh_key=yes
+    group=users
+    groups=sudo
+    password={{ passwords.max }}
+
+- name: create user guest
+  user: name=guest shell=/usr/bin/zsh group=users
+
+- include: user-common.yml
+  become_user: max
+  vars:
+    user: max
+
+- include: user-common.yml
+  become_user: guest
+  vars:
+    user: guest
+
+- include: user-max.yml
+  become_user: max
+
+- name: assures autologin conf dir exists
+  file: path=/etc/systemd/system/getty@tty1.service.d state=directory
+
+- name: copy guest autologin conf file
+  copy:
+    src=getty.override.conf
+    dest=/etc/systemd/system/getty@tty1.service.d/override.conf
+
+- name: activate autologin
+  service: name=getty@tty1.service enabled=yes state=started

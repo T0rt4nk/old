@@ -1,0 +1,4 @@
+- name: install nginx package
+  apt: name=nginx
+- name:
+  service: name=nginx state=started enabled=yes

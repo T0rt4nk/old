@@ -1,0 +1,27 @@
+###############################################################################
+#                                                                             #
+#                   Configure virtualization tools for max                    #
+#                                                                             #
+###############################################################################
+
+- name: adding max to virtualization groups
+  user: name=max groups=docker,libvirt append=yes
+  become_user: root
+
+- name: install vagrant plugin libvirt
+  shell: vagrant plugin install vagrant-libvirt
+
+- name: install vagrant plugin mutate
+  shell: vagrant plugin install vagrant-mutate
+
+- name: stat debian/jessie64
+  stat: path=~/.vagrant.d/boxes/debian-VAGRANTSLASH-jessie64
+  register: debian_box
+
+- name: add a default debian box
+  shell: vagrant mutate https://atlas.hashicorp.com/debian/boxes/jessie64/versions/8.2.2/providers/virtualbox.box libvirt
+  when: not debian_box.stat.exists
+
+- name: rename boxes according to item name
+  shell: mv ~/.vagrant.d/boxes/virtualbox ~/.vagrant.d/boxes/debian-VAGRANTSLASH-jessie64
+  when: not debian_box.stat.exists
